@@ -4,7 +4,7 @@ class Survival:
         self.CellSim = CellSim
 
     def condition(self, cell):
-        if (225 < cell.rect.x < 525):
+        if (300 < cell.rect.x < 450):
             return True
         else:
             return False

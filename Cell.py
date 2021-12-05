@@ -29,7 +29,7 @@ class Cell(Sprite):
         self.cellpos = []
         self.prevPos = 0
         
-        
+        self.food = self.settings.amtOfFood
 
 
         self.genes = []
@@ -93,7 +93,13 @@ class Cell(Sprite):
             self.y = self.point.y
             self.rect.center = self.x, self.y
 
+    def hunger(self):
+        if (self.settings.hunger):
+            self.food -= 1
+
+
     def run(self, cellsrects):
+        self.hunger()
         self.cellpos = cellsrects.copy()
         self.cellpos.remove(self.rect)
         self.notOverlap()

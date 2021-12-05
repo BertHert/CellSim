@@ -13,12 +13,18 @@ class Settings:
         self.gridCollumns = 50
         self.gridLineWidth = 2
 
+        '''FoodSettings'''
+        self.hunger = False
+        self.amtOfFoodBlocks = 0
+
         '''CellSettings''' 
+        self.amtOfFood = 25
+        self.genLength = 100
         self.amtOfCells = 300
         self.amtOfGenes = 10
         self.amtOfSensorNodes = 8
         self.amtOfTriggerNodes = 6
-        self.chanceOfMut = 0
+        self.chanceOfMut = .05
         self.randPosAfGen = True
         self.asexual = True
 

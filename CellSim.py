@@ -7,54 +7,63 @@ import random
 from Gene import Gene
 from Stats import Stats
 from Survival import Survival
+from FoodBlocks import FoodBlocks
+from Walls import Wall
 
 class CellSim:
 
     def __init__(self):
         pygame.init()
+        pygame.display.set_caption("CellSim")
         self.settings = Settings()
         self.random = random
         self.gene = Gene
         self.cellrects = []
+        self.collisionObjs = []
         self.clock = pygame.time.Clock()
         self.stats = Stats()
         self.survival = Survival(self)
+        self.genFPS = []
+        self.frames = 0
+        self.prevSR = 0
 
         self.screen_width = self.settings.scrWidth
         self.screen_height = self.settings.scrHeight
         self.size = width, height = self.screen_width, self.screen_height
         self.screen = pygame.display.set_mode(self.size)
         self.screenRect = self.screen.get_rect()
-        self.cells = []
-        
         self.grid = Grid(self, self.settings.gridRows, self.settings.gridCollumns, self.settings.gridLineWidth)
+        self.cells = []
+        self.foodBlocks = []
+        self.walls = []
+        self.walls.append(Wall(self, 20, 17, 1, 15))
+        self.walls.append(Wall(self, 30, 17, 1, 15))
+
+        for x in range(0,self.settings.amtOfFoodBlocks):
+            self.foodBlocks.append(FoodBlocks(self))
+
+
         for x in range(0,self.settings.amtOfCells):
             self.cells.append(Cell(self))
 
         
 
     def run_game(self):
-        frames = 0
+        self.frames = 0
         while True:
-            if (frames == 100):
-                frames = 0
-                print("FPS: " + str(int(self.clock.get_fps()*10)/10))
-                self.stats.addGen()
-                self.nextGen()
-            if (self.settings.delay):
-                self.clock.tick(self.settings.fps)
-            else:
-                self.clock.tick(0)
-            
+            for cell in self.cells:
+                if (cell.food <= 0):
+                    self.cells.remove(cell)
+            self.dataPrint()
             self._check_events()
             self.updPos()
             self.update_screen()
-            frames += 1
+            self.frames += 1
 
     def _check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("______________________________________")
+                print("======================================")
                 print("Amount Of Gens:")
                 print(self.stats.amountOfGens)
                 print("Survival Rate:")
@@ -81,9 +90,16 @@ class CellSim:
                 cell.move(3)
 
     def updPos(self):
+        self.collisionObjs = []
         self.cellrects = []
         for cell in self.cells:
-            self.cellrects.append(cell.rect)
+            self.collisionObjs.append(cell.rect)
+        for block in self.foodBlocks:
+            self.collisionObjs.append(block.rect)
+        for wall in self.walls:
+            for seg in wall.rects:
+                self.collisionObjs.append(seg)
+        
 
     def survivalList(self):
         survived = []
@@ -96,9 +112,9 @@ class CellSim:
     def nextGen(self):
         survived = self.survivalList()
         self.stats.addStat(int(len(survived)/len(self.cells)*1000)/10)
+        self.prevSR = int(len(survived)/len(self.cells)*1000)/10
         print("SR: " + str(int(len(survived)/len(self.cells)*1000)/10) + "%")
         print("______________________________________")
-        print("Gen " + str(self.stats.amountOfGens))
         nextGen = []
         for cell in survived:
             nextGen.append(cell)
@@ -136,23 +152,63 @@ class CellSim:
             nextGen.append(newCell)       
         self.cells.clear
         self.cells = nextGen
-        print("Amount Of Cells")
-        print(len(self.cells))
         if (self.settings.randPosAfGen):
             for cell in self.cells:
                 cell.randPos()
-            
+
+    def dataPrint(self):
+        self.genFPS.append(int(self.clock.get_fps()*10)/10)
+        if (self.frames == self.settings.genLength):
+            print("")
+            print("Gen " + str(self.stats.amountOfGens))
+            fps = 0
+            for ifps in self.genFPS:
+                fps += ifps
+            fps = fps/len(self.genFPS)
+            self.genFPS = []
+            self.frames = 0
+            print("FPS: " + str(int(fps*10)/10))
+            self.stats.addGen()
+            self.nextGen()
+        if (self.settings.delay):
+            self.clock.tick(self.settings.fps)
+        else:
+            self.clock.tick(0)
+
+    def textUpd(self):
+        font1 = pygame.font.Font("ELEGANT TYPEWRITER Regular.ttf", 50)
+        font2 = pygame.font.Font("ELEGANT TYPEWRITER Regular.ttf", 25)
+        textColor1 = 87, 242, 15
+        textColor2 = 24, 57, 110
+        text = font1.render("Gen: "+ str(self.stats.amountOfGens) + " ", True, textColor1, textColor2)
+        text2 = font2.render("Prev SR: "+ str(self.prevSR) + " ", True, textColor1, textColor2)
+        textRect = text.get_rect()
+        textRect2 = text2.get_rect()
+        
+        textRect.topleft = 0, -10
+        textRect2.topleft = textRect.bottomleft
+        textRect2.y += -5
+        self.screen.blit(text2, textRect2)
+        self.screen.blit(text, textRect)
 
     def update_screen(self):
+        
 
         color = 97, 237, 223
         self.screen.fill(color)
         self.grid.makeGrid()
         self.random.shuffle(self.cells)
-        
+
+        for block in self.foodBlocks:
+            block.upd()
+
+        for wall in self.walls:
+            wall.run()
         
         for cell in self.cells:
-            cell.run(self.cellrects)
+            cell.run(self.collisionObjs)
+        
+        self.textUpd()
         pygame.display.flip()
 
 if __name__ == '__main__':
