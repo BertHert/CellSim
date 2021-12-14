@@ -21,10 +21,11 @@ class Settings:
         self.amtOfFood = 25
         self.genLength = 100
         self.amtOfCells = 300
-        self.amtOfGenes = 10
-        self.amtOfSensorNodes = 8
+        self.amtOfGenes = 8
+        self.amtOfSensorNodes = 9
         self.amtOfTriggerNodes = 6
-        self.chanceOfMut = .05
+        self.mutate = True
+        self.chanceOfMut = .5
         self.randPosAfGen = True
         self.asexual = True
 
@@ -37,6 +38,7 @@ class Settings:
         self.whereHor = True
         self.isTrue = True
         self.isFalse = True
+        self.whatTime = True
 
         '''TriggerGeneToggle'''
         self.moveRandom = True
