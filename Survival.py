@@ -2,12 +2,10 @@ class Survival:
      
     def __init__(self, CellSim):
         self.CellSim = CellSim
+        self.settings = CellSim.settings
 
     def condition(self, cell):
-        if (300 < cell.rect.x < 450):
-            return True
-        else:
-            return False
+        return self.inMiddle(cell)
     
     def isSaftey(self, cell):
         r = 212
@@ -29,7 +27,14 @@ class Survival:
 
     def inMiddle(self, cell):
         gap = 255
-        if (225 < cell.rect.x < 525):
+        if (gap < cell.rect.x < self.settings.scrWidth - gap):
+            return True
+        else:
+            return False
+    
+    def outMiddle(self, cell):
+        gap = 255
+        if (gap < cell.rect.y > self.settings.scrWidth - gap):
             return True
         else:
             return False

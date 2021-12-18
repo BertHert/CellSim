@@ -1,6 +1,6 @@
 import pygame
 
-class FoodBlocks:
+class FoodBlock:
 
     def __init__(self, CellSim):
         self.CellSim = CellSim
@@ -14,7 +14,6 @@ class FoodBlocks:
         self.rect.centerx = self.point.x
         self.rect.centery = self.point.y
         self.food = self.random.randint(1, 100)
-
 
     def upd(self):
         pygame.draw.rect(self.screen, self.color, self.rect)

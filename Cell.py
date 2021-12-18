@@ -1,16 +1,16 @@
 import pygame
-from pygame.sprite import Sprite
+
 from Gene import Gene
 from doesCollide import DoesCollide
 
-class Cell(Sprite):
+class Cell():
     
     def __init__(self, CellSim):
         super().__init__()
         self.collide = DoesCollide
         self.CellSim = CellSim
         self.random = CellSim.random
-        self.color = CellSim.random.randint(10, 255), CellSim.random.randint(10, 255), CellSim.random.randint(10, 255)
+        self.color = CellSim.random.randint(50, 255), CellSim.random.randint(50, 255), CellSim.random.randint(50, 255)
         self.cells = CellSim.cells
         self.gridWidth = CellSim.settings.gridLineWidth
         self.settings = CellSim.settings
@@ -33,16 +33,21 @@ class Cell(Sprite):
 
 
         self.genes = []
-        for gene in range(0, self.settings.amtOfGenes):
-            self.genes.append(Gene(self.CellSim))
+        
 
     def reproduce(self, color, genes):
         self.color = color
-        self.genes.clear()
         self.genes = genes
 
-    def changeColor(self):
-        self.color = self.random.randint(10, 255), self.random.randint(10, 255), self.random.randint(10, 255)
+    def printSelf(self):
+        print(self.color)
+        x = 1
+        for gene in self.genes:
+            gene.printIt(x)
+            x += 1
+
+    def getColor(self):
+        return self.color
 
     def randPos(self):
         self.pos = self.random.randrange(0,len(self.grid.points))
@@ -128,6 +133,8 @@ class Cell(Sprite):
                 thresh = 1
             elif (self.isFalse(active)):
                 thresh = 0
+            elif (self.whatTime(active)):
+                thresh = self.CellSim.frames/self.settings.genLength
 
 
             if (gene.testThres(thresh)):
@@ -165,12 +172,14 @@ class Cell(Sprite):
     def isFalse(self, active):
         if (active == 8 and self.settings.isFalse):
             return True
+    def whatTime(self, active):
+        if (active == 9 and self.settings.whatTime):
+            return True
 
     '''TriggerNodes'''
     def randMove(self, active):
         if (active == 1 and self.settings.moveRandom):
             self.move(self.random.randrange(1, 5))
-
 
     def moveUp(self, active):
         if (active == 2 and self.settings.moveUp):
