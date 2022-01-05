@@ -9,6 +9,7 @@ from Stats import Stats
 from Survival import Survival
 from FoodBlocks import FoodBlock
 from Walls import Wall
+from Nodes import Nodes
 
 class CellSim:
 
@@ -40,13 +41,43 @@ class CellSim:
         """self.walls.append(Wall(self, 10, 10, 30, 1))
         self.walls.append(Wall(self, 10, 40, 30, 1))"""
 
+        """Make Nodes here"""
+        self.nodes = []
+        self.SNodes = []
+        self.IMNodes = []
+        self.TNodes = []
+        active = 1
+        while(len(self.SNodes) < self.settings.amtOfSensorNodes):
+            node = Nodes(self, 1, active)
+            self.SNodes.append(node)
+            self.nodes.append(node)
+            active += 1
+        while(len(self.IMNodes) < self.settings.amtOfIMNodes):
+            node = Nodes(self, 2,1)
+            self.IMNodes.append(node)
+            self.nodes.append(node)
+        active = 1
+        while(len(self.TNodes) < self.settings.amtOfTriggerNodes):
+            node = Nodes(self, 3,active)
+            self.TNodes.append(node)
+            self.nodes.append(node)
+            active += 1
+
+        """Make Food Blocks""" 
         while(len(self.foodBlocks)< self.settings.amtOfFoodBlocks):
             self.foodBlocks.append(FoodBlock(self))
 
+        """Make Cells and Genes"""
         while(len(self.cells)< self.settings.amtOfCells):
+            cell = 0
             cell = Cell(self)
-            while(len(cell.genes) < self.settings.amtOfGenes):
-                cell.genes.append(Gene(self))
+            for sNode in self.SNodes:
+                for IMNode in self.IMNodes:
+                    cell.genes.append(Gene(self, sNode, IMNode))
+            for Node in self.IMNodes:
+                for TNode in self.TNodes:
+                    cell.genes.append(Gene(self, Node, TNode))
+
             self.cells.append(cell)
 
         
@@ -110,6 +141,7 @@ class CellSim:
 
 
     def nextGen(self):
+        mutated = 0
         survived = self.survivalList()
         self.stats.addStat(int(len(survived)/len(self.cells)*1000)/10)
         self.prevSR = int(len(survived)/len(self.cells)*1000)/10
@@ -122,10 +154,13 @@ class CellSim:
             cell1 = survived[cell1I]
             cell2 = survived[cell2I]
             x = 0
+            genes = []
             if (self.settings.asexual):
-                genes = cell1.genes.copy()
+                genes = cell1.getGenes()
             else:
-                c1Genes = cell1.genes.copy()
+                genes = cell1.genes.copy()
+                """Rewrite Sexual Reproduction"""
+                """c1Genes = cell1.genes.copy()
                 c2Genes = cell2.genes.copy()
                 genes = []
                 while(len(genes)<self.settings.amtOfGenes):
@@ -135,21 +170,23 @@ class CellSim:
                     if (len(genes) < self.settings.amtOfGenes and not self.settings.asexual):
                         gene = c2Genes[x+1]
                         genes.append(gene)
-                    x += 1
+                    x += 1"""
             
             whichCell = self.random.randint(1,2)
             if (self.settings.asexual):
                 color = cell1.getColor()
-            if (whichCell == 1):
-                color = cell1.getColor()
             else:
-                color = cell2.getColor()
+                if (whichCell == 1):
+                    color = cell1.getColor()
+                else:
+                    color = cell2.getColor()
             randnum = self.random.random()*100
             if (randnum <= self.settings.chanceOfMut and self.settings.mutate):
                 randGene = self.random.randint(0, len(genes)-1)
                 genes[randGene].mutate()
-                print("Mutated")
+                mutated += 1
                 color = self.random.randint(0, 200), self.random.randint(0, 200), self.random.randint(0, 200)
+            newCell = 0
             newCell = Cell(self)
             newCell.reproduce(color, genes.copy())
             genes.clear()
@@ -162,11 +199,13 @@ class CellSim:
         if (self.settings.randPosAfGen):
             for cell in self.cells:
                 cell.randPos()
+        print("Mutated: " + str(mutated))
 
     def dataPrint(self):
         self.genFPS.append(int(self.clock.get_fps()*10)/10)
         if (self.frames == self.settings.genLength):
             print("")
+            print("Run: " + str(self.stats.run))
             print("Gen " + str(self.stats.amountOfGens))
             fps = 0
             for ifps in self.genFPS:
@@ -218,6 +257,6 @@ class CellSim:
         self.textUpd()
         pygame.display.flip()
 
-if __name__ == '__main__':
-    cs = CellSim()
-    cs.run_game()
+
+cs = CellSim()
+cs.run_game()

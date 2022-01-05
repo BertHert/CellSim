@@ -12,6 +12,8 @@ class Cell():
         self.random = CellSim.random
         self.color = CellSim.random.randint(50, 255), CellSim.random.randint(50, 255), CellSim.random.randint(50, 255)
         self.cells = CellSim.cells
+        self.nodes = CellSim.nodes
+        self.TNodes = CellSim.TNodes
         self.gridWidth = CellSim.settings.gridLineWidth
         self.settings = CellSim.settings
         self.screen = CellSim.screen
@@ -49,6 +51,9 @@ class Cell():
     def getColor(self):
         return self.color
 
+    def getGenes(self):
+        return self.genes.copy()
+
     def randPos(self):
         self.pos = self.random.randrange(0,len(self.grid.points))
         self.point = self.grid.points[self.pos]
@@ -57,16 +62,16 @@ class Cell():
         self.rect.center = self.x, self.y
 
     def move(self, direction):
-        if (direction == 1 and not self.y == self.firstpoint.y and not self.collide.collideTop(self, self.rect, self.cellpos) and 0 <= (self.pos-self.settings.gridCollumns) <= len(self.grid.points)):
+        if (direction == 1 and not self.y == self.firstpoint.y and not self.collide.collideTop(self.rect, self.cellpos) and 0 <= (self.pos-self.settings.gridCollumns) <= len(self.grid.points)):
             self.pos -= self.settings.gridCollumns
             self.prevPos = 1
-        if (direction == 2 and not self.x == self.lastpoint.x and not self.collide.collideRight(self, self.rect, self.cellpos) and 0 <= (self.pos + 1) <= len(self.grid.points)):
+        if (direction == 2 and not self.x == self.lastpoint.x and not self.collide.collideRight(self.rect, self.cellpos) and 0 <= (self.pos + 1) <= len(self.grid.points)):
             self.pos += 1
             self.prevPos = 2
-        if (direction == 3 and not self.y == self.lastpoint.y and not self.collide.collideBottom(self, self.rect, self.cellpos) and 0 <= (self.pos - 1) <= len(self.grid.points)):
+        if (direction == 3 and not self.y == self.lastpoint.y and not self.collide.collideBottom(self.rect, self.cellpos) and 0 <= (self.pos - 1) <= len(self.grid.points)):
             self.pos += self.settings.gridCollumns
             self.prevPos = 3
-        if (direction == 4 and not self.x == self.firstpoint.x and not self.collide.collideLeft(self, self.rect, self.cellpos) and 0 <= (self.pos+self.settings.gridCollumns) <= len(self.grid.points)):
+        if (direction == 4 and not self.x == self.firstpoint.x and not self.collide.collideLeft(self.rect, self.cellpos) and 0 <= (self.pos+self.settings.gridCollumns) <= len(self.grid.points)):
             self.pos -= 1
             self.prevPos = 4
         self.point = self.grid.points[self.pos]
@@ -108,97 +113,22 @@ class Cell():
         self.cellpos = cellsrects.copy()
         self.cellpos.remove(self.rect)
         self.notOverlap()
-        self.runNodes()
+        self.runNetwork()
         self.upd()
 
 
     '''Nodes'''
-    def runNodes(self):
+    def runNetwork(self):
+        for node in self.nodes:
+            node.clearSum()
+
         for gene in self.genes:
-            active = gene.initialNode
-            thresh = 0
-            if (self.lookUp(active)):
-                thresh = 1
-            elif (self.lookRight(active)):
-                thresh = 1
-            elif (self.lookDown(active)):
-                thresh = 1
-            elif (self.lookLeft(active)):
-                thresh = 1
-            elif (self.whereHor(active)):
-                thresh = self.x/self.scrWidth
-            elif (self.whereVert(active)):
-                thresh = self.x/self.scrHeight
-            elif (self.isTrue(active)):
-                thresh = 1
-            elif (self.isFalse(active)):
-                thresh = 0
-            elif (self.whatTime(active)):
-                thresh = self.CellSim.frames/self.settings.genLength
+            gene.run(self)
 
-
-            if (gene.testThres(thresh)):
-                active = gene.finalNode
-                self.randMove(active)
-                self.moveUp(active)
-                self.moveRight(active)
-                self.moveDown(active)
-                self.moveLeft(active)
-                self.doNothing(active)
-
-
-    '''SensorNodes'''
-    def lookUp(self, active):
-        if (active == 1 and self.settings.lookUp):
-            return self.collide.collideTop(self, self.rect, self.cellpos)
-    def lookRight(self, active):
-        if (active == 2 and self.settings.lookRight):
-            return self.collide.collideRight(self, self.rect, self.cellpos)
-    def lookDown(self, active):
-        if (active == 3 and self.settings.lookDown):
-            return self.collide.collideBottom(self, self.rect, self.cellpos)
-    def lookLeft(self, active):
-        if (active == 4 and self.settings.lookLeft):
-            return self.collide.collideLeft(self, self.rect, self.cellpos)
-    def whereVert(self, active):
-        if (active == 5 and self.settings.whereVert):
-            return True
-    def whereHor(self, active):
-        if (active == 6 and self.settings.whereHor):
-            return True
-    def isTrue(self, active):
-        if (active == 7 and self.settings.isTrue):
-            return True
-    def isFalse(self, active):
-        if (active == 8 and self.settings.isFalse):
-            return True
-    def whatTime(self, active):
-        if (active == 9 and self.settings.whatTime):
-            return True
-
-    '''TriggerNodes'''
-    def randMove(self, active):
-        if (active == 1 and self.settings.moveRandom):
-            self.move(self.random.randrange(1, 5))
-
-    def moveUp(self, active):
-        if (active == 2 and self.settings.moveUp):
-            self.move(1)
-
-    def moveRight(self, active):
-        if (active == 3 and self.settings.moveRight):
-            self.move(2)
-
-    def moveDown(self, active):
-        if (active == 4 and self.settings.moveDown):
-            self.move(3)
-
-    def moveLeft(self, active):
-        if (active == 5 and self.settings.moveLeft):
-            self.move(4)
-    
-    def doNothing(self, active):
-        if (active == 6 and self.settings.doNothing):
-            donith = 1
-            donith/2 
-
+        max = self.nodes[len(self.nodes)-1]
+        for node in self.TNodes: 
+            if(node.sum > max.sum):
+                max = node
+        max.run(self)
+        for node in self.nodes:
+            node.clearSum()

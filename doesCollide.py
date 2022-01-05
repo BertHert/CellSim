@@ -3,7 +3,7 @@ from pygame.sprite import collide_mask
 
 class DoesCollide:
 
-    def collideLeft(self, rect, objects):
+    def collideLeft(rect, objects):
         collisions = 0
         for object in objects:
             if rect.midleft == object.midright:
@@ -13,7 +13,7 @@ class DoesCollide:
         else:
             return False
 
-    def collideRight(self, rect, objects):
+    def collideRight(rect, objects):
         collisions = 0
         for object in objects:
             if rect.midright == object.midleft:
@@ -23,7 +23,7 @@ class DoesCollide:
         else:
             return False
 
-    def collideBottom(self, rect, objects):
+    def collideBottom(rect, objects):
         collisions = 0
         for object in objects:
             if rect.midbottom == object.midtop:
@@ -33,7 +33,7 @@ class DoesCollide:
         else:
             return False
 
-    def collideTop(self, rect, objects):
+    def collideTop(rect, objects):
         collisions = 0
         for object in objects:
             if rect.midtop == object.midbottom:

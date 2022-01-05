@@ -1,7 +1,7 @@
 class Settings:
     
     def __init__(self):
-        self.fps = 10
+        self.fps = 20
         self.delay = False
 
         '''ScreenSettings'''
@@ -20,12 +20,13 @@ class Settings:
         '''CellSettings''' 
         self.amtOfFood = 25
         self.genLength = 100
-        self.amtOfCells = 300
-        self.amtOfGenes = 8
-        self.amtOfSensorNodes = 9
+        self.amtOfCells = 150
+        
+        self.amtOfSensorNodes = 7
+        self.amtOfIMNodes = 3
         self.amtOfTriggerNodes = 6
         self.mutate = True
-        self.chanceOfMut = .5
+        self.chanceOfMut = 5
         self.randPosAfGen = True
         self.asexual = True
 
@@ -36,8 +37,6 @@ class Settings:
         self.lookLeft = True
         self.whereVert = True
         self.whereHor = True
-        self.isTrue = True
-        self.isFalse = True
         self.whatTime = True
 
         '''TriggerGeneToggle'''

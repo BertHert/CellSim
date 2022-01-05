@@ -1,3 +1,2 @@
-import random
-
-print(random.randint(1, 10))
+list = 9, 0
+print(list)
