@@ -18,6 +18,7 @@ class Settings:
         self.amtOfFoodBlocks = 0
 
         '''CellSettings''' 
+        self.survivalCondition = 1
         self.amtOfFood = 25
         self.genLength = 100
         self.amtOfCells = 150

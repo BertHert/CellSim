@@ -5,7 +5,12 @@ class Survival:
         self.settings = CellSim.settings
 
     def condition(self, cell):
-        return self.inMiddle(cell)
+        active = self.settings.survivalCondition
+
+        if(active == 1):
+            return self.moveRight(cell)
+        elif(active == 2):
+            return self.inMiddle(cell)
     
     def isSaftey(self, cell):
         r = 212

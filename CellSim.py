@@ -10,6 +10,7 @@ from Survival import Survival
 from FoodBlocks import FoodBlock
 from Walls import Wall
 from Nodes import Nodes
+from PauseScreen import PauseScreen
 
 class CellSim:
 
@@ -17,6 +18,7 @@ class CellSim:
         pygame.init()
         pygame.display.set_caption("CellSim")
         self.settings = Settings()
+        self.pauseScreen = PauseScreen(self)
         self.random = random
         self.gene = Gene
         self.cellrects = []
@@ -38,9 +40,10 @@ class CellSim:
         self.cells = []
         self.foodBlocks = []
         self.walls = []
-        self.walls.append(Wall(self, 18, 10, 1, 30))
-        self.walls.append(Wall(self, 32, 10, 1, 30))
-
+        """self.walls.append(Wall(self, 18, 10, 1, 30))
+        self.walls.append(Wall(self, 32, 10, 1, 30))"""
+        print("Press ESC to access settings\n")
+        
         """Make Nodes here"""
         self.nodes = []
         self.SNodes = []
@@ -87,14 +90,7 @@ class CellSim:
         self.frames = 0
         while True:
             if (self.paused):
-                grabedCell = input("Which cell to grab: ")
-                print("Cell "+ grabedCell)
-                genes = self.cells[int(grabedCell)].genes.copy()
-                num = 1
-                for gene in genes:
-                    gene.printIt(num)
-                    num += 1
-                self.paused = False
+                self.pauseScreen.run()
 
             for cell in self.cells:
                 if (cell.food <= 0):
@@ -120,7 +116,7 @@ class CellSim:
                 self.check_keydown_events(event)
 
     def check_keydown_events(self, event):
-        if event.key == pygame.K_p:
+        if event.key == pygame.K_ESCAPE:
             self.paused = True
 
     def updPos(self):
@@ -200,6 +196,7 @@ class CellSim:
     def dataPrint(self):
         self.genFPS.append(int(self.clock.get_fps()*10)/10)
         if (self.frames == self.settings.genLength):
+            print("Press ESC to access settings\n")
             print("")
             print("Gen " + str(self.stats.amountOfGens))
             fps = 0
@@ -234,7 +231,7 @@ class CellSim:
 
     def update_screen(self):
         
-
+        
         color = 97, 237, 223
         self.screen.fill(color)
         self.grid.makeGrid()

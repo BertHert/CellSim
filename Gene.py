@@ -26,4 +26,4 @@ class Gene:
         
 
     def printIt(self, number):
-        print(str(number) + "| " + str(self.initialNode) + ":" + str(self.threshold) + ":" + str(self.finalNode))
+        print(str(number) + "| " + str(self.initialNode.active) + ":" + str(self.threshold) + ":" + str(self.finalNode.active))
