@@ -11,7 +11,7 @@ class Settings:
         '''GridSettings'''
         self.gridRows = 50
         self.gridCollumns = 50
-        self.gridLineWidth = 2
+        self.gridLineWidth = 0
 
         '''FoodSettings'''
         self.hunger = False
@@ -20,12 +20,15 @@ class Settings:
         '''CellSettings''' 
         self.amtOfFood = 25
         self.genLength = 100
-        self.amtOfCells = 300
-        self.amtOfGenes = 8
-        self.amtOfSensorNodes = 9
+        self.amtOfCells = 150
+        self.fixedSR = .1
+        
+        self.amtOfSensorNodes = 7
+        self.amtOfIMNodes = 6
         self.amtOfTriggerNodes = 6
         self.mutate = True
-        self.chanceOfMut = .5
+        self.chanceOfMut = .05
+        self.chanceOfRepMut = .10
         self.randPosAfGen = True
         self.asexual = True
 
@@ -36,8 +39,6 @@ class Settings:
         self.lookLeft = True
         self.whereVert = True
         self.whereHor = True
-        self.isTrue = True
-        self.isFalse = True
         self.whatTime = True
 
         '''TriggerGeneToggle'''
