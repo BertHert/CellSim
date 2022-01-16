@@ -1,7 +1,7 @@
 class Settings:
     
     def __init__(self):
-        self.fps = 20
+        self.fps = 10
         self.delay = False
 
         '''ScreenSettings'''
@@ -11,7 +11,7 @@ class Settings:
         '''GridSettings'''
         self.gridRows = 50
         self.gridCollumns = 50
-        self.gridLineWidth = 2
+        self.gridLineWidth = 0
 
         '''FoodSettings'''
         self.hunger = False
@@ -21,12 +21,14 @@ class Settings:
         self.amtOfFood = 25
         self.genLength = 100
         self.amtOfCells = 150
+        self.fixedSR = .1
         
         self.amtOfSensorNodes = 7
-        self.amtOfIMNodes = 3
+        self.amtOfIMNodes = 6
         self.amtOfTriggerNodes = 6
         self.mutate = True
-        self.chanceOfMut = 5
+        self.chanceOfMut = .05
+        self.chanceOfRepMut = .10
         self.randPosAfGen = True
         self.asexual = True
 

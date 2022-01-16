@@ -4,6 +4,7 @@ class Stats:
         self.survivalRate = []
         self.amountOfGens = 1
         self.run = 1
+        self.points = []
 
     def addStat(self, SR):
         self.survivalRate.append(SR)
@@ -13,3 +14,6 @@ class Stats:
     
     def addRun(self):
         self.run += 1
+
+    def addPoints(self, point):
+        self.points.append(point)

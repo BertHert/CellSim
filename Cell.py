@@ -5,12 +5,11 @@ from doesCollide import DoesCollide
 
 class Cell():
     
-    def __init__(self, CellSim):
-        super().__init__()
+    def __init__(self, CellSim, index):
         self.collide = DoesCollide
         self.CellSim = CellSim
         self.random = CellSim.random
-        self.color = CellSim.random.randint(50, 255), CellSim.random.randint(50, 255), CellSim.random.randint(50, 255)
+        self.color = CellSim.random.randint(0, 255), CellSim.random.randint(0, 255), CellSim.random.randint(0, 255)
         self.cells = CellSim.cells
         self.nodes = CellSim.nodes
         self.TNodes = CellSim.TNodes
@@ -30,6 +29,8 @@ class Cell():
         self.firstpoint = self.grid.points[0]
         self.cellpos = []
         self.prevPos = 0
+        self.points = 0
+        self.index = index
         
         self.food = self.settings.amtOfFood
 
@@ -37,9 +38,37 @@ class Cell():
         self.genes = []
         
 
-    def reproduce(self, color, genes):
+    def mutate(self):
+        keep = True
+        while(keep):
+            randGene = self.random.randint(0, len(self.genes)-1)
+            genes = self.genes.copy()
+            gene = genes[randGene]
+            genes.clear()
+            gene.mutate()
+            self.chgGene(randGene, gene)
+            self.color = self.random.randint(0, 255), self.random.randint(0, 255), self.random.randint(0, 255)
+            randnum = self.random.random()
+            if (randnum > self.settings.chanceOfRepMut):
+                keep = False
+
+    def reproduce(self):
+        cell = Cell(self.CellSim, self.index)
+        cell.chgGenes(self.genes.copy())
+        cell.chgColor(self.color)
+        return cell
+
+
+    def chgGenes(self, genes):
+        self.genes.clear()
+        for gene in genes.copy():
+            self.genes.append(gene)
+
+    def chgGene(self, index, gene):
+        self.genes[index] = gene
+
+    def chgColor(self, color):
         self.color = color
-        self.genes = genes
 
     def printSelf(self):
         print(self.color)
@@ -53,6 +82,12 @@ class Cell():
 
     def getGenes(self):
         return self.genes.copy()
+
+    def addPoint(self):
+        self.points += 1
+
+    def clearPoints(self):
+        self.points = 0
 
     def randPos(self):
         self.pos = self.random.randrange(0,len(self.grid.points))
@@ -80,8 +115,10 @@ class Cell():
         self.rect.center = self.x, self.y
 
     def upd(self):
+        black = 0,0,0
         pygame.draw.circle(self.screen, self.color, self.rect.center, min(self.grid.intervalRow/2-2, self.grid.intervalCol/2-2))
-
+        pygame.draw.circle(self.screen, black, self.rect.center, min(self.grid.intervalRow/2-2, self.grid.intervalCol/2-2), 1)
+        
     def checkPos(self, x, y):
         newCells = self.cells.copy()
         newCells.remove(self)

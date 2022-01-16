@@ -38,8 +38,8 @@ class CellSim:
         self.cells = []
         self.foodBlocks = []
         self.walls = []
-        """self.walls.append(Wall(self, 10, 10, 30, 1))
-        self.walls.append(Wall(self, 10, 40, 30, 1))"""
+        self.walls.append(Wall(self, 18, 10, 1, 30))
+        self.walls.append(Wall(self, 32, 10, 1, 30))
 
         """Make Nodes here"""
         self.nodes = []
@@ -69,15 +69,16 @@ class CellSim:
 
         """Make Cells and Genes"""
         while(len(self.cells)< self.settings.amtOfCells):
+            cellI = 0
             cell = 0
-            cell = Cell(self)
+            cell = Cell(self, cellI)
             for sNode in self.SNodes:
                 for IMNode in self.IMNodes:
                     cell.genes.append(Gene(self, sNode, IMNode))
             for Node in self.IMNodes:
                 for TNode in self.TNodes:
                     cell.genes.append(Gene(self, Node, TNode))
-
+            cellI += 1
             self.cells.append(cell)
 
         
@@ -98,6 +99,8 @@ class CellSim:
             for cell in self.cells:
                 if (cell.food <= 0):
                     self.cells.remove(cell)
+                if (self.survival.condition(cell)):
+                    cell.addPoint()
             self.dataPrint()
             self._check_events()
             self.updPos()
@@ -110,8 +113,8 @@ class CellSim:
                 print("======================================")
                 print("Amount Of Gens:")
                 print(self.stats.amountOfGens)
-                print("Survival Rate:")
-                print(self.stats.survivalRate)
+                print("Avg Points:")
+                print(self.stats.points)
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self.check_keydown_events(event)
@@ -131,69 +134,62 @@ class CellSim:
             for seg in wall.rects:
                 self.collisionObjs.append(seg)
         
+    def sortCells(self, cell):
+        return cell.points
 
     def survivalList(self):
         survived = []
+        self.cells.sort(key = self.sortCells)
+        self.cells.reverse()
+        copyCell = self.cells.copy()
+        notSur = self.cells.copy()
+        x = 0
         for cell in self.cells:
-            if (self.survival.condition(cell)):
-                survived.append(cell)
+            if(self.survival.condition(cell)):
+                survived.append(copyCell[x])
+                notSur.remove(cell)
+            x += 1
+                
+        x = 0
+        while (len(survived) < self.settings.fixedSR*self.settings.amtOfCells):
+            survived.append(notSur[x])
+            x += 1
+        copyCell.clear()
+        notSur.clear()
         return survived
 
 
     def nextGen(self):
         mutated = 0
-        survived = self.survivalList()
+        survived = self.survivalList().copy()
+        cells = self.cells.copy()
         self.stats.addStat(int(len(survived)/len(self.cells)*1000)/10)
         self.prevSR = int(len(survived)/len(self.cells)*1000)/10
         print("SR: " + str(int(len(survived)/len(self.cells)*1000)/10) + "%")
+        scoreT = 0
+        for cell in cells:
+            scoreT += cell.points
+        avgScore = int(scoreT/len(cells))
+        print("Avg Score: " + str(avgScore))
+        self.stats.addPoints(avgScore)
+        for cell in cells:
+            cell.clearPoints
         print("______________________________________")
         nextGen = []
-        while (len(nextGen) < len(self.cells)):
-            cell1I = self.random.randint(0, len(survived)-1)
-            cell2I = self.random.randint(0, len(survived)-1)
-            cell1 = survived[cell1I]
-            cell2 = survived[cell2I]
-            x = 0
-            genes = []
-            if (self.settings.asexual):
-                genes = cell1.getGenes()
-            else:
-                genes = cell1.genes.copy()
-                """Rewrite Sexual Reproduction"""
-                """c1Genes = cell1.genes.copy()
-                c2Genes = cell2.genes.copy()
-                genes = []
-                while(len(genes)<self.settings.amtOfGenes):
-                    
-                    gene = c1Genes[x]
-                    genes.append(gene)
-                    if (len(genes) < self.settings.amtOfGenes and not self.settings.asexual):
-                        gene = c2Genes[x+1]
-                        genes.append(gene)
-                    x += 1"""
-            
-            whichCell = self.random.randint(1,2)
-            if (self.settings.asexual):
-                color = cell1.getColor()
-            else:
-                if (whichCell == 1):
-                    color = cell1.getColor()
-                else:
-                    color = cell2.getColor()
-            randnum = self.random.random()*100
+        while (len(nextGen) < len(cells)):
+            randnum = self.random.randint(0, len(survived)-1)
+            parent = survived[randnum]
+            cell = parent.reproduce()
+
+            nextGen.append(cell)
+        self.cells.clear() 
+        cells.clear()     
+        for x in range(len(nextGen)):
+            cell = nextGen[x]
+            randnum = self.random.random()
             if (randnum <= self.settings.chanceOfMut and self.settings.mutate):
-                randGene = self.random.randint(0, len(genes)-1)
-                genes[randGene].mutate()
+                cell.mutate()
                 mutated += 1
-                color = self.random.randint(0, 200), self.random.randint(0, 200), self.random.randint(0, 200)
-            newCell = 0
-            newCell = Cell(self)
-            newCell.reproduce(color, genes.copy())
-            genes.clear()
-            nextGen.append(newCell)
-            """newCell.printSelf()"""
-        self.cells.clear()       
-        for cell in nextGen:
             self.cells.append(cell)
         nextGen.clear()
         if (self.settings.randPosAfGen):
@@ -205,7 +201,6 @@ class CellSim:
         self.genFPS.append(int(self.clock.get_fps()*10)/10)
         if (self.frames == self.settings.genLength):
             print("")
-            print("Run: " + str(self.stats.run))
             print("Gen " + str(self.stats.amountOfGens))
             fps = 0
             for ifps in self.genFPS:
