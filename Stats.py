@@ -5,6 +5,7 @@ class Stats:
         self.amountOfGens = 1
         self.run = 1
         self.points = []
+        self.bestCell = 0
 
     def addStat(self, SR):
         self.survivalRate.append(SR)
@@ -17,3 +18,6 @@ class Stats:
 
     def addPoints(self, point):
         self.points.append(point)
+
+    def setBestCell(self, cell):
+        self.bestCell = cell

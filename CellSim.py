@@ -167,7 +167,15 @@ class CellSim:
             scoreT += cell.points
         avgScore = int(scoreT/len(cells))
         print("Avg Score: " + str(avgScore))
+        
+        if(len(self.stats.points) > 2 and avgScore > self.stats.points[-1]):
+            bcell = cells[0]
+            for cell in cells:
+                if(cell.points > bcell.points):
+                    bcell = cell
+            self.stats.setBestCell(bcell)
         self.stats.addPoints(avgScore)
+        
         for cell in cells:
             cell.clearPoints
         print("______________________________________")

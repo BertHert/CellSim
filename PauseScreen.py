@@ -275,6 +275,7 @@ class PauseScreen:
                 self.CellSim.stats.survivalRate.clear()
                 self.CellSim.stats.amountOfGens = 1
                 self.CellSim.stats.points.clear()
+                self.CellSim.stats.bestCell = 0
                 self.CellSim.prevSR = 0
 
                 """Make Nodes here"""
@@ -316,6 +317,7 @@ class PauseScreen:
                             cell.genes.append(Gene(self.CellSim, Node, TNode))
                     cellI += 1
                     self.CellSim.cells.append(cell)
+                print("Restarted")
             elif(input1 == 4):
                 break
 
