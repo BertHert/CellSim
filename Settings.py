@@ -5,8 +5,8 @@ class Settings:
         self.delay = False
 
         '''ScreenSettings'''
-        self.scrWidth = 751
-        self.scrHeight = 751
+        self.scrWidth = 501
+        self.scrHeight = 501
 
         '''GridSettings'''
         self.gridRows = 50
@@ -23,6 +23,8 @@ class Settings:
         self.genLength = 100
         self.amtOfCells = 150
         self.fixedSR = .1
+
+        self.cellSpeed = 10
         
         self.amtOfSensorNodes = 7
         self.amtOfIMNodes = 6

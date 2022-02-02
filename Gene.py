@@ -16,12 +16,12 @@ class Gene:
     def mutate(self): 
         posaThres = self.threshold  
         posaThres += self.random.random() * self.random.randint(-1,1)
-        if (posaThres <= 10 and posaThres >= 0):
+        if (posaThres <= 10 and posaThres >= -10):
             self.threshold = posaThres
         else:
-            while(not posaThres <= 10 and not posaThres >= 0):
+            while(not posaThres <= 10 and not posaThres >= -10):
                 posaThres += self.random.random() * self.random.randint(-1,1)
-                if (posaThres <= 1 and posaThres >= 0):
+                if (posaThres <= 10 and posaThres >= -10):
                     self.threshold = posaThres
         
 

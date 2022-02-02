@@ -55,10 +55,12 @@ class CellSim:
             self.SNodes.append(node)
             self.nodes.append(node)
             active += 1
+        active = 1
         while(len(self.IMNodes) < self.settings.amtOfIMNodes):
-            node = Nodes(self, 2,1)
+            node = Nodes(self, 2,"IM" + str(active))
             self.IMNodes.append(node)
             self.nodes.append(node)
+            active += 1
         active = 1
         while(len(self.TNodes) < self.settings.amtOfTriggerNodes):
             node = Nodes(self, 3,active)
@@ -222,8 +224,8 @@ class CellSim:
             self.clock.tick(0)
 
     def textUpd(self):
-        font1 = pygame.font.Font("D:/VSCode/PythonVSC/Cell/typwrterReg.ttf", 50)
-        font2 = pygame.font.Font("D:/VSCode/PythonVSC/Cell/typwrterReg.ttf", 25)
+        font1 = pygame.font.SysFont("font.ttf", 50)
+        font2 = pygame.font.SysFont("font.ttf", 25)
         textColor1 = 87, 242, 15
         textColor2 = 24, 57, 110
         text = font1.render("Gen: "+ str(self.stats.amountOfGens) + " ", True, textColor1, textColor2)
@@ -231,9 +233,8 @@ class CellSim:
         textRect = text.get_rect()
         textRect2 = text2.get_rect()
         
-        textRect.topleft = 0, -10
+        textRect.topleft = 0, 0
         textRect2.topleft = textRect.bottomleft
-        textRect2.y += -5
         self.screen.blit(text2, textRect2)
         self.screen.blit(text, textRect)
 
