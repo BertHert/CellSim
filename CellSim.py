@@ -11,6 +11,7 @@ from FoodBlocks import FoodBlock
 from Walls import Wall
 from Nodes import Nodes
 from PauseScreen import PauseScreen
+from doesCollide import DoesCollide
 
 class CellSim:
 
@@ -26,6 +27,7 @@ class CellSim:
         self.clock = pygame.time.Clock()
         self.stats = Stats()
         self.survival = Survival(self)
+        self.collide = DoesCollide
         self.genFPS = []
         self.frames = 0
         self.prevSR = 0
@@ -47,8 +49,9 @@ class CellSim:
         """Make Nodes here"""
         self.nodes = []
         self.SNodes = []
-        self.IMNodes = []
+        self.IMNodes = [[0 for i in range(self.settings.amtOfIMNodes)] for j in range(self.settings.amtOfIMNodesRows)]
         self.TNodes = []
+        self.BNode = Nodes(self, 4, "B")
         active = 1
         while(len(self.SNodes) < self.settings.amtOfSensorNodes):
             node = Nodes(self, 1, active)
@@ -56,11 +59,19 @@ class CellSim:
             self.nodes.append(node)
             active += 1
         active = 1
-        while(len(self.IMNodes) < self.settings.amtOfIMNodes):
+        for row in range(len(self.IMNodes)):
+            for col in range(len(self.IMNodes[row])):
+                node = Nodes(self, 2,"IM-" + str(active))
+                self.IMNodes[row][col] = node
+                self.nodes.append(node)
+                active += 1
+        
+
+        """while(len(self.IMNodes) < self.settings.amtOfIMNodes):
             node = Nodes(self, 2,"IM" + str(active))
             self.IMNodes.append(node)
             self.nodes.append(node)
-            active += 1
+            active += 1"""
         active = 1
         while(len(self.TNodes) < self.settings.amtOfTriggerNodes):
             node = Nodes(self, 3,active)
@@ -78,11 +89,17 @@ class CellSim:
             cell = 0
             cell = Cell(self, cellI)
             for sNode in self.SNodes:
-                for IMNode in self.IMNodes:
+                for IMNode in self.IMNodes[0]:
                     cell.genes.append(Gene(self, sNode, IMNode))
-            for Node in self.IMNodes:
+            for row in range(len(self.IMNodes)-1):
+                for col in range(len(self.IMNodes[row])):
+                    for IMNode in self.IMNodes[row+1]:
+                        cell.genes.append(Gene(self, self.IMNodes[row][col], IMNode))
+            for Node in self.IMNodes[len(self.IMNodes)-1]:
                 for TNode in self.TNodes:
                     cell.genes.append(Gene(self, Node, TNode))
+            for TNode in self.TNodes:
+                cell.genes.append(Gene(self, self.BNode, TNode))
             cellI += 1
             self.cells.append(cell)
 

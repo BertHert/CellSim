@@ -1,7 +1,7 @@
 class Settings:
     
     def __init__(self):
-        self.fps = 10
+        self.fps = 100
         self.delay = False
 
         '''ScreenSettings'''
@@ -21,13 +21,14 @@ class Settings:
         self.survivalCondition = 1
         self.amtOfFood = 25
         self.genLength = 100
-        self.amtOfCells = 150
+        self.amtOfCells = 20
         self.fixedSR = .1
 
-        self.cellSpeed = 10
+        self.cellSpeed = 5
         
         self.amtOfSensorNodes = 7
-        self.amtOfIMNodes = 6
+        self.amtOfIMNodes = 4
+        self.amtOfIMNodesRows = 5
         self.amtOfTriggerNodes = 6
         self.mutate = True
         self.chanceOfMut = .05

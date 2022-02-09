@@ -1,12 +1,11 @@
 import pygame
 
 from Gene import Gene
-from doesCollide import DoesCollide
 
 class Cell():
     
     def __init__(self, CellSim, index):
-        self.collide = DoesCollide
+        self.collide = CellSim.collide
         self.CellSim = CellSim
         self.random = CellSim.random
         self.color = CellSim.random.randint(0, 255), CellSim.random.randint(0, 255), CellSim.random.randint(0, 255)
@@ -41,12 +40,12 @@ class Cell():
     def mutate(self):
         keep = True
         while(keep):
-            randGene = self.random.randint(0, len(self.genes)-1)
+            randGene = self.random.randrange(len(self.genes))
             genes = self.genes.copy()
+            self.genes.clear()
             gene = genes[randGene]
-            genes.clear()
             gene.mutate()
-            self.chgGene(randGene, gene)
+            self.chgGenes(genes)
             self.color = self.random.randint(0, 255), self.random.randint(0, 255), self.random.randint(0, 255)
             randnum = self.random.random()
             if (randnum > self.settings.chanceOfRepMut):
@@ -61,7 +60,8 @@ class Cell():
 
     def chgGenes(self, genes):
         self.genes.clear()
-        for gene in genes.copy():
+        copy  = genes.copy()
+        for gene in copy:
             self.genes.append(gene)
 
     def chgGene(self, index, gene):
@@ -97,22 +97,18 @@ class Cell():
         self.rect.center = self.x, self.y
 
     def move(self, direction):
-        if (direction == 1 and not self.y == self.firstpoint.y and not self.collide.collideTop(self.rect, self.cellpos) and 0 <= (self.pos-self.settings.gridCollumns) <= len(self.grid.points)):
-            self.pos -= self.settings.gridCollumns
+        if (direction == 1 and self.rect.centery - self.settings.cellSpeed >= self.firstpoint.y and not self.collide.collideTop(self.rect, self.cellpos)):
+            self.rect.centery -= self.settings.cellSpeed
             self.prevPos = 1
-        if (direction == 2 and not self.x == self.lastpoint.x and not self.collide.collideRight(self.rect, self.cellpos) and 0 <= (self.pos + 1) <= len(self.grid.points)):
-            self.pos += 1
+        if (direction == 2 and self.rect.centerx + self.settings.cellSpeed <= self.lastpoint.x and not self.collide.collideRight(self.rect, self.cellpos)):
+            self.rect.centerx += self.settings.cellSpeed
             self.prevPos = 2
-        if (direction == 3 and not self.y == self.lastpoint.y and not self.collide.collideBottom(self.rect, self.cellpos) and 0 <= (self.pos - 1) <= len(self.grid.points)):
-            self.pos += self.settings.gridCollumns
+        if (direction == 3 and self.rect.centery + self.settings.cellSpeed <= self.lastpoint.y and not self.collide.collideBottom(self.rect, self.cellpos)):
+            self.rect.centery += self.settings.cellSpeed
             self.prevPos = 3
-        if (direction == 4 and not self.x == self.firstpoint.x and not self.collide.collideLeft(self.rect, self.cellpos) and 0 <= (self.pos+self.settings.gridCollumns) <= len(self.grid.points)):
-            self.pos -= 1
+        if (direction == 4 and self.rect.centerx - self.settings.cellSpeed >= self.firstpoint.x and not self.collide.collideLeft(self.rect, self.cellpos)):
+            self.rect.centerx -= self.settings.cellSpeed
             self.prevPos = 4
-        self.point = self.grid.points[self.pos]
-        self.x = self.point.x
-        self.y = self.point.y
-        self.rect.center = self.x, self.y
 
     def upd(self):
         black = 0,0,0
@@ -167,5 +163,6 @@ class Cell():
             if(node.sum > max.sum):
                 max = node
         max.run(self)
+
         for node in self.nodes:
             node.clearSum()

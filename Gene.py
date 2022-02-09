@@ -5,7 +5,7 @@ class Gene:
         self.settings = CellSim.settings
         self.initialNode = iN
         self.finalNode = fN
-        self.threshold = self.random.randrange(0, 10)
+        self.threshold = self.random.random() * self.random.randint(-1,1)
 
     def run(self, cell):
         value = self.initialNode.run(cell)
@@ -16,12 +16,12 @@ class Gene:
     def mutate(self): 
         posaThres = self.threshold  
         posaThres += self.random.random() * self.random.randint(-1,1)
-        if (posaThres <= 10 and posaThres >= -10):
+        if (posaThres <= 1 and posaThres >= -1):
             self.threshold = posaThres
         else:
-            while(not posaThres <= 10 and not posaThres >= -10):
+            while(not posaThres <= 1 and not posaThres >= -1):
                 posaThres += self.random.random() * self.random.randint(-1,1)
-                if (posaThres <= 10 and posaThres >= -10):
+                if (posaThres <= 1 and posaThres >= -1):
                     self.threshold = posaThres
         
 
