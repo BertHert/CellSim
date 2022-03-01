@@ -15,10 +15,10 @@ from doesCollide import DoesCollide
 
 class CellSim:
 
-    def __init__(self):
+    def __init__(self, settings):
         pygame.init()
         pygame.display.set_caption("CellSim")
-        self.settings = Settings()
+        self.settings = settings
         self.pauseScreen = PauseScreen(self)
         self.random = random
         self.gene = Gene
@@ -93,8 +93,9 @@ class CellSim:
                     cell.genes.append(Gene(self, sNode, IMNode))
             for row in range(len(self.IMNodes)-1):
                 for col in range(len(self.IMNodes[row])):
+                    node = self.IMNodes[row][col]
                     for IMNode in self.IMNodes[row+1]:
-                        cell.genes.append(Gene(self, self.IMNodes[row][col], IMNode))
+                        cell.genes.append(Gene(self, node, IMNode))
             for Node in self.IMNodes[len(self.IMNodes)-1]:
                 for TNode in self.TNodes:
                     cell.genes.append(Gene(self, Node, TNode))
@@ -275,6 +276,6 @@ class CellSim:
         self.textUpd()
         pygame.display.flip()
 
-
-cs = CellSim()
+s = Settings()
+cs = CellSim(s)
 cs.run_game()

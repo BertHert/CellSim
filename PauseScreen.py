@@ -262,61 +262,77 @@ class PauseScreen:
                     elif(input1 == 7):
                         break
             elif(input1 == 3):
-                self.CellSim.screen_width = self.settings.scrWidth
-                self.CellSim.screen_height = self.settings.scrHeight
-                self.CellSim.size = width, height = self.CellSim.screen_width, self.CellSim.screen_height
-                self.CellSim.screen = pygame.display.set_mode(self.CellSim.size)
-                self.CellSim.screenRect = self.CellSim.screen.get_rect()
-                self.CellSim.grid = Grid(self.CellSim, self.settings.gridRows, self.settings.gridCollumns, self.settings.gridLineWidth)
-                self.CellSim.cells = []
-                self.CellSim.foodBlocks = []
-                self.CellSim.walls = []
-
-                self.CellSim.stats.survivalRate.clear()
-                self.CellSim.stats.amountOfGens = 1
-                self.CellSim.stats.points.clear()
-                self.CellSim.stats.bestCell = 0
-                self.CellSim.prevSR = 0
-
+                self.screen_width = self.settings.scrWidth
+                self.screen_height = self.settings.scrHeight
+                self.size = width, height = self.screen_width, self.screen_height
+                self.screen = pygame.display.set_mode(self.size)
+                self.screenRect = self.screen.get_rect()
+                self.grid = Grid(self, self.settings.gridRows, self.settings.gridCollumns, self.settings.gridLineWidth)
+                self.cells = []
+                self.foodBlocks = []
+                self.walls = []
+                """self.walls.append(Wall(self, 18, 10, 1, 30))
+                self.walls.append(Wall(self, 32, 10, 1, 30))"""
+                print("Press ESC to access settings\n")
+                
                 """Make Nodes here"""
-                self.CellSim.nodes = []
-                self.CellSim.SNodes = []
-                self.CellSim.IMNodes = []
-                self.CellSim.TNodes = []
+                self.nodes = []
+                self.SNodes = []
+                self.IMNodes = [[0 for i in range(self.settings.amtOfIMNodes)] for j in range(self.settings.amtOfIMNodesRows)]
+                self.TNodes = []
+                self.BNode = Nodes(self, 4, "B")
                 active = 1
-                while(len(self.CellSim.SNodes) < self.settings.amtOfSensorNodes):
-                    node = Nodes(self.CellSim, 1, active)
-                    self.CellSim.SNodes.append(node)
-                    self.CellSim.nodes.append(node)
+                while(len(self.SNodes) < self.settings.amtOfSensorNodes):
+                    node = Nodes(self, 1, active)
+                    self.SNodes.append(node)
+                    self.nodes.append(node)
                     active += 1
-                while(len(self.CellSim.IMNodes) < self.settings.amtOfIMNodes):
-                    node = Nodes(self.CellSim, 2,1)
-                    self.CellSim.IMNodes.append(node)
-                    self.CellSim.nodes.append(node)
                 active = 1
-                while(len(self.CellSim.TNodes) < self.settings.amtOfTriggerNodes):
-                    node = Nodes(self.CellSim, 3,active)
-                    self.CellSim.TNodes.append(node)
-                    self.CellSim.nodes.append(node)
+                for row in range(len(self.IMNodes)):
+                    for col in range(len(self.IMNodes[row])):
+                        node = Nodes(self, 2,"IM-" + str(active))
+                        self.IMNodes[row][col] = node
+                        self.nodes.append(node)
+                        active += 1
+                
+
+                """while(len(self.IMNodes) < self.settings.amtOfIMNodes):
+                    node = Nodes(self, 2,"IM" + str(active))
+                    self.IMNodes.append(node)
+                    self.nodes.append(node)
+                    active += 1"""
+                active = 1
+                while(len(self.TNodes) < self.settings.amtOfTriggerNodes):
+                    node = Nodes(self, 3,active)
+                    self.TNodes.append(node)
+                    self.nodes.append(node)
                     active += 1
 
                 """Make Food Blocks""" 
-                while(len(self.CellSim.foodBlocks)< self.settings.amtOfFoodBlocks):
-                    self.CellSim.foodBlocks.append(FoodBlock(self))
+                while(len(self.foodBlocks)< self.settings.amtOfFoodBlocks):
+                    self.foodBlocks.append(FoodBlock(self))
 
                 """Make Cells and Genes"""
-                while(len(self.CellSim.cells)< self.settings.amtOfCells):
+                while(len(self.cells)< self.settings.amtOfCells):
                     cellI = 0
                     cell = 0
-                    cell = Cell(self.CellSim, cellI)
-                    for sNode in self.CellSim.SNodes:
-                        for IMNode in self.CellSim.IMNodes:
-                            cell.genes.append(Gene(self.CellSim, sNode, IMNode))
-                    for Node in self.CellSim.IMNodes:
-                        for TNode in self.CellSim.TNodes:
-                            cell.genes.append(Gene(self.CellSim, Node, TNode))
+                    cell = Cell(self, cellI)
+                    for sNode in self.SNodes:
+                        for IMNode in self.IMNodes[0]:
+                            cell.genes.append(Gene(self, sNode, IMNode))
+                    for row in range(len(self.IMNodes)-1):
+                        for col in range(len(self.IMNodes[row])):
+                            node = self.IMNodes[row][col]
+                            for IMNode in self.IMNodes[row+1]:
+                                cell.genes.append(Gene(self, node, IMNode))
+                    for Node in self.IMNodes[len(self.IMNodes)-1]:
+                        for TNode in self.TNodes:
+                            cell.genes.append(Gene(self, Node, TNode))
+                    for TNode in self.TNodes:
+                        cell.genes.append(Gene(self, self.BNode, TNode))
                     cellI += 1
-                    self.CellSim.cells.append(cell)
+                    self.cells.append(cell)
+
                 print("Restarted")
             elif(input1 == 4):
                 break
