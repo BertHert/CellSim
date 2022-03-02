@@ -18,16 +18,16 @@ class Settings:
         self.amtOfFoodBlocks = 0
 
         '''CellSettings''' 
-        self.survivalCondition = 1
+        self.survivalCondition = 2
         self.amtOfFood = 25
         self.genLength = 100
-        self.amtOfCells = 150
+        self.amtOfCells = 100
         self.fixedSR = .1
 
         self.cellSpeed = 10
         
         self.amtOfSensorNodes = 7
-        self.amtOfIMNodes = 6
+        self.amtOfIMNodes = 8
         self.amtOfTriggerNodes = 6
         self.mutate = True
         self.chanceOfMut = .05
