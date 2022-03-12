@@ -14,10 +14,11 @@ from PauseScreen import PauseScreen
 
 class CellSim:
 
-    def __init__(self):
+    def __init__(self, settings):
         pygame.init()
         pygame.display.set_caption("CellSim")
-        self.settings = Settings()
+        self.running = True
+        self.settings = settings
         self.pauseScreen = PauseScreen(self)
         self.random = random
         self.gene = Gene
@@ -42,7 +43,7 @@ class CellSim:
         self.walls = []
         """self.walls.append(Wall(self, 18, 10, 1, 30))
         self.walls.append(Wall(self, 32, 10, 1, 30))"""
-        print("Press ESC to access settings\n")
+        print("Press ESC to pause\n")
         
         """Make Nodes here"""
         self.nodes = []
@@ -90,9 +91,9 @@ class CellSim:
 
     def run_game(self):
         self.frames = 0
-        while True:
+        while self.running:
             if (self.paused):
-                self.pauseScreen.run()
+                self.running = self.pauseScreen.run()
 
             for cell in self.cells:
                 if (cell.food <= 0):
@@ -257,7 +258,3 @@ class CellSim:
         
         self.textUpd()
         pygame.display.flip()
-
-
-cs = CellSim()
-cs.run_game()
