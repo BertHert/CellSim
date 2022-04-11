@@ -24,12 +24,14 @@ class Nodes:
             elif (active == 4):
                 thresh = self.tf(self.lookLeft(cell))
             elif (active == 5):
-                thresh = self.whereHor(cell)
+                if(self.whereHor()):
+                    thresh = cell.rect.centerx/self.settings.scrWidth
             elif (active == 6):
-                thresh = self.whereVert(cell)
+                if(self.whereVert()):
+                    thresh = cell.rect.centery/self.settings.scrHeight
             elif (active == 7):
                 if(self.whatTime()):
-                    thresh = self.whatTime()
+                    thresh = self.CellSim.frames/self.settings.genLength
             return thresh
         if(self.assignment == 2):
             return self.sum
@@ -64,12 +66,21 @@ class Nodes:
     def lookLeft(self, cell):
         if (self.settings.lookLeft):
             return cell.collide.collideLeft(cell.rect, cell.cellpos)
-    def whereVert(self, cell):
-        return cell.rect.centery/self.settings.scrHeight
-    def whereHor(self, cell):
-        return cell.rect.centerx/self.settings.scrWidth
+    def whereVert(self):
+        if (self.settings.whereVert):
+            return True
+        else:
+            return False
+    def whereHor(self):
+        if (self.settings.whereHor):
+            return True
+        else:
+            return False
     def whatTime(self):
-        self.CellSim.frames/self.settings.genLength
+        if (self.settings.whatTime):
+            return True
+        else:
+            return False
 
     '''TriggerNodes'''
     def randMove(self, active, cell):

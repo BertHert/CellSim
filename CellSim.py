@@ -11,13 +11,13 @@ from FoodBlocks import FoodBlock
 from Walls import Wall
 from Nodes import Nodes
 from PauseScreen import PauseScreen
+from doesCollide import DoesCollide
 
 class CellSim:
 
     def __init__(self, settings):
         pygame.init()
         pygame.display.set_caption("CellSim")
-        self.running = True
         self.settings = settings
         self.pauseScreen = PauseScreen(self)
         self.random = random
@@ -27,6 +27,7 @@ class CellSim:
         self.clock = pygame.time.Clock()
         self.stats = Stats()
         self.survival = Survival(self)
+        self.collide = DoesCollide
         self.genFPS = []
         self.frames = 0
         self.prevSR = 0
@@ -43,13 +44,14 @@ class CellSim:
         self.walls = []
         """self.walls.append(Wall(self, 18, 10, 1, 30))
         self.walls.append(Wall(self, 32, 10, 1, 30))"""
-        print("Press ESC to pause\n")
+        print("Press ESC to access settings\n")
         
         """Make Nodes here"""
         self.nodes = []
         self.SNodes = []
-        self.IMNodes = []
+        self.IMNodes = [[0 for i in range(self.settings.amtOfIMNodes)] for j in range(self.settings.amtOfIMNodesRows)]
         self.TNodes = []
+        self.BNode = Nodes(self, 4, "B")
         active = 1
         while(len(self.SNodes) < self.settings.amtOfSensorNodes):
             node = Nodes(self, 1, active)
@@ -57,11 +59,19 @@ class CellSim:
             self.nodes.append(node)
             active += 1
         active = 1
-        while(len(self.IMNodes) < self.settings.amtOfIMNodes):
+        for row in range(len(self.IMNodes)):
+            for col in range(len(self.IMNodes[row])):
+                node = Nodes(self, 2,"IM-" + str(active))
+                self.IMNodes[row][col] = node
+                self.nodes.append(node)
+                active += 1
+        
+
+        """while(len(self.IMNodes) < self.settings.amtOfIMNodes):
             node = Nodes(self, 2,"IM" + str(active))
             self.IMNodes.append(node)
             self.nodes.append(node)
-            active += 1
+            active += 1"""
         active = 1
         while(len(self.TNodes) < self.settings.amtOfTriggerNodes):
             node = Nodes(self, 3,active)
@@ -79,11 +89,18 @@ class CellSim:
             cell = 0
             cell = Cell(self, cellI)
             for sNode in self.SNodes:
-                for IMNode in self.IMNodes:
+                for IMNode in self.IMNodes[0]:
                     cell.genes.append(Gene(self, sNode, IMNode))
-            for Node in self.IMNodes:
+            for row in range(len(self.IMNodes)-1):
+                for col in range(len(self.IMNodes[row])):
+                    node = self.IMNodes[row][col]
+                    for IMNode in self.IMNodes[row+1]:
+                        cell.genes.append(Gene(self, node, IMNode))
+            for Node in self.IMNodes[len(self.IMNodes)-1]:
                 for TNode in self.TNodes:
                     cell.genes.append(Gene(self, Node, TNode))
+            for TNode in self.TNodes:
+                cell.genes.append(Gene(self, self.BNode, TNode))
             cellI += 1
             self.cells.append(cell)
 
@@ -91,9 +108,9 @@ class CellSim:
 
     def run_game(self):
         self.frames = 0
-        while self.running:
+        while True:
             if (self.paused):
-                self.running = self.pauseScreen.run()
+                self.pauseScreen.run()
 
             for cell in self.cells:
                 if (cell.food <= 0):
@@ -258,3 +275,7 @@ class CellSim:
         
         self.textUpd()
         pygame.display.flip()
+
+s = Settings()
+cs = CellSim(s)
+cs.run_game()
