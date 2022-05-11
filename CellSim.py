@@ -18,11 +18,7 @@ class CellSim:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("CellSim")
-<<<<<<< HEAD
-        self.settings = settings
-=======
         self.settings = Settings()
->>>>>>> parent of 23bbb21 (New Main file)
         self.pauseScreen = PauseScreen(self)
         self.random = random
         self.gene = Gene
@@ -53,7 +49,8 @@ class CellSim:
         """Make Nodes here"""
         self.nodes = []
         self.SNodes = []
-        self.IMNodes = [[0 for i in range(self.settings.amtOfIMNodes)] for j in range(self.settings.amtOfIMNodesRows)]
+        #self.IMNodes = [[0 for i in range(self.settings.amtOfIMNodes)] for j in range(self.settings.amtOfIMNodesRows)]
+        self.IMNodes = []
         self.TNodes = []
         self.BNode = Nodes(self, 4, "B")
         active = 1
@@ -63,20 +60,20 @@ class CellSim:
             self.nodes.append(node)
             active += 1
         active = 1
-        for row in range(len(self.IMNodes)):
+        """for row in range(len(self.IMNodes)):
             for col in range(len(self.IMNodes[row])):
                 node = Nodes(self, 2,"IM-" + str(active))
                 self.IMNodes[row][col] = node
                 self.nodes.append(node)
-                active += 1
-        
+                active += 1"""
 
-        """while(len(self.IMNodes) < self.settings.amtOfIMNodes):
+        while(len(self.IMNodes) < self.settings.amtOfIMNodes):
             node = Nodes(self, 2,"IM" + str(active))
             self.IMNodes.append(node)
             self.nodes.append(node)
-            active += 1"""
+            active += 1
         active = 1
+
         while(len(self.TNodes) < self.settings.amtOfTriggerNodes):
             node = Nodes(self, 3,active)
             self.TNodes.append(node)
@@ -93,16 +90,19 @@ class CellSim:
             cell = 0
             cell = Cell(self, cellI)
             for sNode in self.SNodes:
-                for IMNode in self.IMNodes[0]:
+                for IMNode in self.IMNodes:
                     cell.genes.append(Gene(self, sNode, IMNode))
-            for row in range(len(self.IMNodes)-1):
+            """for row in range(len(self.IMNodes)-1):
                 for col in range(len(self.IMNodes[row])):
                     node = self.IMNodes[row][col]
                     for IMNode in self.IMNodes[row+1]:
                         cell.genes.append(Gene(self, node, IMNode))
             for Node in self.IMNodes[len(self.IMNodes)-1]:
                 for TNode in self.TNodes:
-                    cell.genes.append(Gene(self, Node, TNode))
+                    cell.genes.append(Gene(self, Node, TNode))"""
+            for IMNode in self.IMNodes:
+                for TNode in self.TNodes:
+                    cell.genes.append(Gene(self, IMNode, TNode))
             for TNode in self.TNodes:
                 cell.genes.append(Gene(self, self.BNode, TNode))
             cellI += 1
@@ -280,11 +280,6 @@ class CellSim:
         self.textUpd()
         pygame.display.flip()
 
-<<<<<<< HEAD
-s = Settings()
-cs = CellSim(s)
-=======
 
 cs = CellSim()
->>>>>>> parent of 23bbb21 (New Main file)
 cs.run_game()
