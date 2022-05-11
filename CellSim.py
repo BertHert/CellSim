@@ -15,10 +15,14 @@ from doesCollide import DoesCollide
 
 class CellSim:
 
-    def __init__(self, settings):
+    def __init__(self):
         pygame.init()
         pygame.display.set_caption("CellSim")
+<<<<<<< HEAD
         self.settings = settings
+=======
+        self.settings = Settings()
+>>>>>>> parent of 23bbb21 (New Main file)
         self.pauseScreen = PauseScreen(self)
         self.random = random
         self.gene = Gene
@@ -276,6 +280,11 @@ class CellSim:
         self.textUpd()
         pygame.display.flip()
 
+<<<<<<< HEAD
 s = Settings()
 cs = CellSim(s)
+=======
+
+cs = CellSim()
+>>>>>>> parent of 23bbb21 (New Main file)
 cs.run_game()
