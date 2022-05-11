@@ -25,20 +25,20 @@ class Survival:
             return False
 
     def moveRight(self, cell):
-        if (self.settings.scrWidth * .9 < cell.rect.x):
+        if (600 < cell.rect.x):
             return True
         else:
             return False
 
     def inMiddle(self, cell):
-        gap = self.settings.scrWidth* .3
+        gap = 255
         if (gap < cell.rect.x < self.settings.scrWidth - gap):
             return True
         else:
             return False
     
     def outMiddle(self, cell):
-        gap = self.settings.scrWidth* .4
+        gap = 255
         if (gap < cell.rect.y > self.settings.scrWidth - gap):
             return True
         else:

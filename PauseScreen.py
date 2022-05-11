@@ -56,7 +56,7 @@ class PauseScreen:
                                 self.settings.scrWidth = input1
                             elif(input1 == 2):
                                 input1 = int(input("\n2: scrHeight = "))
-                                self.settings.scrHeight = input1
+                                self.settings.scrWidth = input1
                             elif(input1 == 3):
                                 break
                     
@@ -140,7 +140,7 @@ class PauseScreen:
                                 self.settings.chanceOfMut = input1
                             elif(input1 == 8):
                                 input1 = float(input("\n8: chanceOfRepMut = "))
-                                self.settings.chanceOfRepMut = input1
+                                self.settings.amtOfFoodBlocks = input1
                             elif(input1 == 9):
                                 input1 = input("\n9: randPosAfGen = T/F")
                                 if(input1.lower == "t"):
@@ -161,8 +161,8 @@ class PauseScreen:
                             "\n3: lookDown: " + str(self.settings.lookDown) +
                             "\n4: lookLeft: " + str(self.settings.lookLeft) +
                             "\n5: whereVert: " + str(self.settings.whereVert) +
-                            "\n6: whereHor: " + str(self.settings.whereHor) +
-                            "\n7: whatTime: " + str(self.settings.whatTime) +
+                            "\n6: whereHor: " + str(self.settings.scrHeight) +
+                            "\n7: whatTime: " + str(self.settings.whereHor) +
                             "\n8: back")
                             input1 = int(input("\n"))
                             if(input1 == 1):
@@ -221,43 +221,43 @@ class PauseScreen:
                             "\n6: doNothing: " + str(self.settings.doNothing) +
                             "\n7: back")
                             input1 = int(input("\n"))
-                            if(input1 == 1):
+                            if(input == 1):
                                 input1 = input("\n1: moveRandom = T/F")
                                 if(input1.lower == "t"):
                                     self.settings.moveRandom = True
                                 elif(input1.lower == "f"):
                                     self.settings.moveRandom = False
-                            if(input1 == 2):
+                            if(input == 2):
                                 input1 = input("\n2: moveUp = T/F")
                                 if(input1.lower == "t"):
                                     self.settings.moveUp = True
                                 elif(input1.lower == "f"):
                                     self.settings.moveUp = False
-                            if(input1 == 3):
+                            if(input == 3):
                                 input1 = input("\n3: moveRight = T/F")
                                 if(input1.lower == "t"):
                                     self.settings.moveRight = True
                                 elif(input1.lower == "f"):
                                     self.settings.moveRight = False
-                            if(input1 == 4):
+                            if(input == 4):
                                 input1 = input("\n4: moveDown = T/F")
                                 if(input1.lower == "t"):
                                     self.settings.moveDown = True
                                 elif(input1.lower == "f"):
                                     self.settings.moveDown = False
-                            if(input1 == 5):
+                            if(input == 5):
                                 input1 = input("\n5: moveLeft = T/F")
                                 if(input1.lower == "t"):
                                     self.settings.moveLeft = True
                                 elif(input1.lower == "f"):
                                     self.settings.moveLeft = False
-                            if(input1 == 6):
+                            if(input == 6):
                                 input1 = input("\n6: doNothing = T/F")
                                 if(input1.lower == "t"):
                                     self.settings.doNothing = True
                                 elif(input1.lower == "f"):
                                     self.settings.doNothing = False
-                            if(input1 == 7):
+                            if(input == 7):
                                 break
                     elif(input1 == 7):
                         break
