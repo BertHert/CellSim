@@ -53,7 +53,12 @@ class Cell():
 
     def reproduce(self):
         cell = Cell(self.CellSim, self.index)
-        cell.chgGenes(self.genes.copy())
+        newGenes = []
+        for gene in self.genes:
+            nwGene = Gene(self.CellSim, gene.initialNode, gene.finalNode)
+            nwGene.setTresh(gene.threshold)
+            newGenes.append(nwGene)
+        cell.chgGenes(newGenes)
         cell.chgColor(self.color)
         return cell
 
@@ -97,18 +102,42 @@ class Cell():
         self.rect.center = self.x, self.y
 
     def move(self, direction):
-        if (direction == 1 and self.rect.centery - self.settings.cellSpeed >= self.firstpoint.y and not self.collide.collideTop(self.rect, self.cellpos)):
-            self.rect.centery -= self.settings.cellSpeed
-            self.prevPos = 1
-        if (direction == 2 and self.rect.centerx + self.settings.cellSpeed <= self.lastpoint.x and not self.collide.collideRight(self.rect, self.cellpos)):
-            self.rect.centerx += self.settings.cellSpeed
-            self.prevPos = 2
-        if (direction == 3 and self.rect.centery + self.settings.cellSpeed <= self.lastpoint.y and not self.collide.collideBottom(self.rect, self.cellpos)):
-            self.rect.centery += self.settings.cellSpeed
-            self.prevPos = 3
-        if (direction == 4 and self.rect.centerx - self.settings.cellSpeed >= self.firstpoint.x and not self.collide.collideLeft(self.rect, self.cellpos)):
-            self.rect.centerx -= self.settings.cellSpeed
-            self.prevPos = 4
+        if (direction == 1 and self.rect.centery - self.settings.cellSpeed >= self.firstpoint.y):
+            if(self.settings.collisions):
+                if(not self.collide.collideTop(self.rect, self.cellpos)):
+                    self.rect.centery -= self.settings.cellSpeed
+                    self.prevPos = 1
+            else:
+                self.rect.centery -= self.settings.cellSpeed
+                self.prevPos = 1
+        if (direction == 2 and self.rect.centerx + self.settings.cellSpeed <= self.lastpoint.x):
+            if(self.settings.collisions):
+                if(not self.collide.collideRight(self.rect, self.cellpos)):
+                    self.rect.centerx += self.settings.cellSpeed
+                    self.prevPos = 2
+            else:
+                self.rect.centerx += self.settings.cellSpeed
+                self.prevPos = 2
+            
+        if (direction == 3 and self.rect.centery + self.settings.cellSpeed <= self.lastpoint.y):
+            if(self.settings.collisions):
+                if(not self.collide.collideBottom(self.rect, self.cellpos)):
+                    self.rect.centery += self.settings.cellSpeed
+                    self.prevPos = 3
+            else:
+                self.rect.centery += self.settings.cellSpeed
+                self.prevPos = 3
+
+            
+        if (direction == 4 and self.rect.centerx - self.settings.cellSpeed >= self.firstpoint.x):
+            if(self.settings.collisions):
+                if(not self.collide.collideLeft(self.rect, self.cellpos)):
+                    self.rect.centerx -= self.settings.cellSpeed
+                    self.prevPos = 4
+            else:
+                self.rect.centerx -= self.settings.cellSpeed
+                self.prevPos = 4
+            
 
     def upd(self):
         black = 0,0,0

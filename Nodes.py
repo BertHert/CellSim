@@ -1,3 +1,6 @@
+from cgitb import lookup
+
+
 class Nodes:
 
     def __init__(self, CellSim, assignment, active):
@@ -12,14 +15,14 @@ class Nodes:
         if(self.assignment == 1):
             active = self.active
             thresh = 0
-            if (self.lookUp(active, cell)):
-                thresh = 1
-            elif (self.lookRight(active, cell)):
-                thresh = 1
-            elif (self.lookDown(active, cell)):
-                thresh = 1
-            elif (self.lookLeft(active, cell)):
-                thresh = 1
+            if (active == 1 and self.settings.lookUp):
+                thresh = self.tf(self.lookUp(cell))
+            elif (active == 2 and self.settings.lookRight):
+                thresh = self.tf(self.lookRight(cell))
+            elif (active == 3 and self.settings.lookDown):
+                thresh = self.tf(self.lookDown(cell))
+            elif (active == 4 and self.settings.lookLeft):
+                thresh = self.tf(self.lookDown(cell))
             elif (self.whereHor(active, cell)):
                 thresh = cell.x/self.settings.scrWidth
             elif (self.whereVert(active, cell)):
@@ -46,18 +49,14 @@ class Nodes:
 
 
     '''SensorNodes'''
-    def lookUp(self, active, cell):
-        if (active == 1 and self.settings.lookUp):
-            return cell.collide.collideTop(cell.rect, cell.cellpos)
-    def lookRight(self, active, cell):
-        if (active == 2 and self.settings.lookRight):
-            return cell.collide.collideRight(cell.rect, cell.cellpos)
-    def lookDown(self, active, cell):
-        if (active == 3 and self.settings.lookDown):
-            return cell.collide.collideBottom(cell.rect, cell.cellpos)
-    def lookLeft(self, active, cell):
-        if (active == 4 and self.settings.lookLeft):
-            return cell.collide.collideLeft(cell.rect, cell.cellpos)
+    def lookUp(self, cell):
+        return cell.collide.collideTop(cell.rect, cell.cellpos)
+    def lookRight(self, cell):
+        return cell.collide.collideRight(cell.rect, cell.cellpos)
+    def lookDown(self, cell):
+        return cell.collide.collideBottom(cell.rect, cell.cellpos)
+    def lookLeft(self, cell):
+        return cell.collide.collideLeft(cell.rect, cell.cellpos)
     def whereVert(self, active, cell):
         if (active == 5 and self.settings.whereVert):
             return True
@@ -88,3 +87,9 @@ class Nodes:
         if (active == 6 and self.settings.doNothing):
             donith = 1
             donith/2 
+
+    def tf(self, b):
+        if(b):
+            return 1
+        else:
+            return 0

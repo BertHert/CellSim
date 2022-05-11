@@ -42,8 +42,8 @@ class CellSim:
         self.cells = []
         self.foodBlocks = []
         self.walls = []
-        """self.walls.append(Wall(self, 18, 10, 1, 30))
-        self.walls.append(Wall(self, 32, 10, 1, 30))"""
+        self.walls.append(Wall(self, 18, 10, 1, 30))
+        self.walls.append(Wall(self, 32, 10, 1, 30))
         print("Press ESC to access settings\n")
         
         """Make Nodes here"""
@@ -52,24 +52,13 @@ class CellSim:
         #self.IMNodes = [[0 for i in range(self.settings.amtOfIMNodes)] for j in range(self.settings.amtOfIMNodesRows)]
         self.IMNodes = []
         self.TNodes = []
-        self.BNode = Nodes(self, 4, "B")
+        #self.BNode = Nodes(self, 4, "B")
         active = 1
         while(len(self.SNodes) < self.settings.amtOfSensorNodes):
             node = Nodes(self, 1, active)
             self.SNodes.append(node)
             self.nodes.append(node)
             active += 1
-<<<<<<< HEAD
-        active = 1
-        """for row in range(len(self.IMNodes)):
-            for col in range(len(self.IMNodes[row])):
-                node = Nodes(self, 2,"IM-" + str(active))
-                self.IMNodes[row][col] = node
-                self.nodes.append(node)
-                active += 1"""
-
-=======
->>>>>>> parent of 37c51be (Add files via upload)
         while(len(self.IMNodes) < self.settings.amtOfIMNodes):
             node = Nodes(self, 2,1)
             self.IMNodes.append(node)
@@ -105,8 +94,8 @@ class CellSim:
             for IMNode in self.IMNodes:
                 for TNode in self.TNodes:
                     cell.genes.append(Gene(self, IMNode, TNode))
-            for TNode in self.TNodes:
-                cell.genes.append(Gene(self, self.BNode, TNode))
+            #for TNode in self.TNodes:
+                #cell.genes.append(Gene(self, self.BNode, TNode))
             cellI += 1
             self.cells.append(cell)
 
@@ -165,12 +154,21 @@ class CellSim:
         self.cells.reverse()
         copyCell = self.cells.copy()
         notSur = self.cells.copy()
-        x = 0
+
+        count = 0
         for cell in self.cells:
             if(self.survival.condition(cell)):
-                survived.append(copyCell[x])
-                notSur.remove(cell)
-            x += 1
+                count += 1
+        self.stats.addStat((count/len(self.cells)*1000)/10)
+        self.prevSR = int((count/len(self.cells)*1000)/10)
+        print("SR: " + str(((count/len(self.cells)*1000)/10)) + "%")
+        
+        for x in range(len(copyCell)):
+            cell = self.cells[x]
+            if(self.survival.condition(cell)):
+                if(self.random.random() >=.5):
+                    survived.append(copyCell[x])
+                    notSur.remove(cell)
                 
         x = 0
         while (len(survived) < self.settings.fixedSR*self.settings.amtOfCells):
@@ -185,9 +183,6 @@ class CellSim:
         mutated = 0
         survived = self.survivalList().copy()
         cells = self.cells.copy()
-        self.stats.addStat(int(len(survived)/len(self.cells)*1000)/10)
-        self.prevSR = int(len(survived)/len(self.cells)*1000)/10
-        print("SR: " + str(int(len(survived)/len(self.cells)*1000)/10) + "%")
         scoreT = 0
         for cell in cells:
             scoreT += cell.points
@@ -248,12 +243,12 @@ class CellSim:
             self.clock.tick(0)
 
     def textUpd(self):
-        font1 = pygame.font.Font("D:/VSCode/PythonVSC/Cell/typwrterReg.ttf", 50)
-        font2 = pygame.font.Font("D:/VSCode/PythonVSC/Cell/typwrterReg.ttf", 25)
+        font1 = pygame.font.Font("typwrterReg.ttf", 50)
+        font2 = pygame.font.Font("typwrterReg.ttf", 25)
         textColor1 = 87, 242, 15
         textColor2 = 24, 57, 110
         text = font1.render("Gen: "+ str(self.stats.amountOfGens) + " ", True, textColor1, textColor2)
-        text2 = font2.render("Prev SR: "+ str(self.prevSR) + " ", True, textColor1, textColor2)
+        text2 = font2.render("Prev SR: "+ str(self.prevSR) + "%", True, textColor1, textColor2)
         textRect = text.get_rect()
         textRect2 = text2.get_rect()
         
