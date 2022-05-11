@@ -1,6 +1,3 @@
-from xmlrpc.client import boolean
-
-
 class Nodes:
 
     def __init__(self, CellSim, assignment, active):
@@ -15,23 +12,20 @@ class Nodes:
         if(self.assignment == 1):
             active = self.active
             thresh = 0
-            if (active == 1):
-                thresh = self.tf(self.lookUp(cell))
-            elif (active == 2):
-                thresh = self.tf(self.lookRight(cell))
-            elif (active == 3):
-                thresh = self.tf(self.lookDown(cell))
-            elif (active == 4):
-                thresh = self.tf(self.lookLeft(cell))
-            elif (active == 5):
-                if(self.whereHor()):
-                    thresh = cell.rect.centerx/self.settings.scrWidth
-            elif (active == 6):
-                if(self.whereVert()):
-                    thresh = cell.rect.centery/self.settings.scrHeight
-            elif (active == 7):
-                if(self.whatTime()):
-                    thresh = self.CellSim.frames/self.settings.genLength
+            if (self.lookUp(active, cell)):
+                thresh = 1
+            elif (self.lookRight(active, cell)):
+                thresh = 1
+            elif (self.lookDown(active, cell)):
+                thresh = 1
+            elif (self.lookLeft(active, cell)):
+                thresh = 1
+            elif (self.whereHor(active, cell)):
+                thresh = cell.x/self.settings.scrWidth
+            elif (self.whereVert(active, cell)):
+                thresh = cell.x/self.settings.scrHeight
+            elif (self.whatTime(active, cell)):
+                thresh = self.CellSim.frames/self.settings.genLength
             return thresh
         if(self.assignment == 2):
             return self.sum
@@ -43,8 +37,6 @@ class Nodes:
             self.moveDown(active, cell)
             self.moveLeft(active, cell)
             self.doNothing(active, cell)
-        if(self.assignment == 4):
-            return 1
 
     def add(self, value):
         self.sum += value
@@ -54,33 +46,27 @@ class Nodes:
 
 
     '''SensorNodes'''
-    def lookUp(self, cell):
-        if (self.settings.lookUp):
+    def lookUp(self, active, cell):
+        if (active == 1 and self.settings.lookUp):
             return cell.collide.collideTop(cell.rect, cell.cellpos)
-    def lookRight(self, cell):
-        if (self.settings.lookRight):
+    def lookRight(self, active, cell):
+        if (active == 2 and self.settings.lookRight):
             return cell.collide.collideRight(cell.rect, cell.cellpos)
-    def lookDown(self, cell):
-        if (self.settings.lookDown):
+    def lookDown(self, active, cell):
+        if (active == 3 and self.settings.lookDown):
             return cell.collide.collideBottom(cell.rect, cell.cellpos)
-    def lookLeft(self, cell):
-        if (self.settings.lookLeft):
+    def lookLeft(self, active, cell):
+        if (active == 4 and self.settings.lookLeft):
             return cell.collide.collideLeft(cell.rect, cell.cellpos)
-    def whereVert(self):
-        if (self.settings.whereVert):
+    def whereVert(self, active, cell):
+        if (active == 5 and self.settings.whereVert):
             return True
-        else:
-            return False
-    def whereHor(self):
-        if (self.settings.whereHor):
+    def whereHor(self, active, cell):
+        if (active == 6 and self.settings.whereHor):
             return True
-        else:
-            return False
-    def whatTime(self):
-        if (self.settings.whatTime):
+    def whatTime(self, active, cell):
+        if (active == 7 and self.settings.whatTime):
             return True
-        else:
-            return False
 
     '''TriggerNodes'''
     def randMove(self, active, cell):
@@ -102,13 +88,3 @@ class Nodes:
         if (active == 6 and self.settings.doNothing):
             donith = 1
             donith/2 
-
-    
-    def tf(self, b):
-        if(b):
-            return 1
-        else:
-            return 0
-
-    def printSelf(self):
-        print(str(self.assignment)+":"+str(self.active))
