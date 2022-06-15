@@ -240,7 +240,7 @@ class CellSim:
         if (self.settings.delay):
             self.clock.tick(self.settings.fps)
         else:
-            self.clock.tick(0)
+            self.clock.tick()
 
     def textUpd(self):
         font1 = pygame.font.Font("typwrterReg.ttf", 50)
